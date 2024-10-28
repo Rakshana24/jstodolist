@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDoList</title>
+    <style>
+        body {
+            background-image: url(last.jpg);
+            background-repeat: no-repeat;
+            background-size: cover;
+            transition: filter 0.3s;
+        }
+        #add {
+            margin-top: 41%;
+            margin-left: 90%;
+            height: 50px;
+            width: 57px;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            background-color: darkgrey;
+        }
+        #open {
+            display: none; /* Initially hidden */
+            border-style: solid;
+            border-color: black;
+            box-shadow: 5px 5px 5px 5px;
+            border-radius: 40px;
+            position: fixed; /* Fixed position to overlay */
+            top: 50%; /* Center vertically */
+            left: 50%; /* Center horizontally */
+            transform: translate(-50%, -50%); /* Adjust for centering */
+            width: 40%;
+            height:30%;
+            background-color: white; /* Background for visibility */
+            padding: 20px; /* Padding for spacing */
+            z-index: 1000; /* Ensure it's above other elements */
+        }
+        h3 {
+            text-align: center;
+        }
+        #task, #title1 {
+            height: 20%;
+        }
+        #enter {
+            margin-top: 10px;
+            height: 25%;
+            width: 10%; /* Full width for button */
+        }
+        #overlay {
+            display: none; /* Initially hidden */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+            z-index: 999; /* Ensure it's below the popup */
+        }
+        #taskList {
+            border-style: solid;
+            height: 40%;
+            width: 30%;
+            position: fixed; 
+            top: 20%; 
+            right: 10%; 
+            color: black;
+            z-index: 1; 
+            max-width: 200px; 
+            background-color: transparent; 
+            padding: 10px; 
+            border-color: black;
+            box-shadow: 5px 5px 5px 5px;
+        }
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .task-item button {
+            margin-left: 5px;
+        }
+        .task-item button {
+    background-color: #4CAF50; 
+    color:black; 
+    border: none; 
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer; 
+    transition: background-color 0.3s;
+    box-shadow:5px 5px 5px;
+}
+
+.task-item button:hover {
+    background-color: #45a049; 
+}
+
+.task-item button:nth-child(3) {
+    background-color: #f44336;
+}
+
+.task-item button:nth-child(3):hover {
+    background-color: #d32f2f; 
+}
+        
+    </style>
+</head>
+<body>
+    <button id="add">ADD</button>
+    <div id="overlay"></div>
+    <div id="open">
+        <h3>ToDoList</h3>
+        <input id="title1" placeholder="Title"><br>
+        <input id="task" placeholder="Enter your task"><br>
+        <input id="enter" type="submit" value="Enter">
+    </div>
+    
+    <div id="taskList">
+        <h3>Your Tasks</h3>
+    </div> <!-- Display entered tasks here -->
+
+    <script>
+        let currentTask = null;
+
+        document.getElementById("add").addEventListener("click", function() {
+            document.getElementById("open").style.display = "block"; // Show popup
+            document.getElementById("overlay").style.display = "block"; // Show overlay
+            // Clear input fields for new task
+            currentTask = null;
+            document.getElementById("title1").value = '';
+            document.getElementById("task").value = '';
+        });
+
+        document.getElementById("enter").addEventListener("click", function() {
+            const title = document.getElementById("title1").value;
+            const task = document.getElementById("task").value;
+
+            if (title || task) {
+                const taskList = document.getElementById("taskList");
+                if (currentTask) {
+                    // Update existing task
+                    currentTask.querySelector('.task-title').textContent = title;
+                    currentTask.querySelector('.task-description').textContent = task;
+                } else {
+                    // Create new task
+                    const newTask = document.createElement("div");
+                    newTask.className = 'task-item';
+
+                    const titleSpan = document.createElement("span");
+                    titleSpan.className = 'task-title';
+                    titleSpan.textContent = title;
+
+                    const taskSpan = document.createElement("span");
+                    taskSpan.className = 'task-description';
+                    taskSpan.textContent = task;
+
+                    const editButton = document.createElement("button");
+                    editButton.textContent = "Edit";
+                    editButton.onclick = function() {
+                        document.getElementById("open").style.display = "block"; // Show popup
+                        document.getElementById("overlay").style.display = "block"; // Show overlay
+                        currentTask = newTask; // Set current task for editing
+                        document.getElementById("title1").value = title;
+                        document.getElementById("task").value = task;
+                    };
+
+                    const deleteButton = document.createElement("button");
+                    deleteButton.textContent = "Delete";
+                    deleteButton.onclick = function() {
+                        taskList.removeChild(newTask); // Remove task
+                    };
+
+                    newTask.appendChild(titleSpan);
+                    newTask.appendChild(taskSpan);
+                    newTask.appendChild(editButton);
+                    newTask.appendChild(deleteButton);
+
+                    taskList.appendChild(newTask);
+                }
+            }
+
+            // Hide popup and overlay
+            document.getElementById("open").style.display = "none";
+            document.getElementById("overlay").style.display = "none";
+            
+            // Clear input fields
+            document.getElementById("title1").value = '';
+            document.getElementById("task").value = '';
+        });
+
+        // Close popup when clicking the overlay
+        document.getElementById("overlay").addEventListener("click", function() {
+            document.getElementById("open").style.display = "none"; // Hide popup
+            document.getElementById("overlay").style.display = "none"; // Hide overlay
+            currentTask = null; // Reset current task
+        });
+    </script>
+</body>
+</html>
